@@ -10,34 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout
+      # 1️⃣ Faz checkout do repositório
       - uses: actions/checkout@v5
 
-      # 2️⃣ Baixa editor Linux oficial
-      - name: Setup Godot
-        run: |
-          wget https://downloads.tuxfamily.org/godotengine/4.4.1/Godot_v4.4.1-stable_linux.x86_64.zip -O godot.zip
-          unzip godot.zip -d godot
-          chmod +x godot/Godot_v4.4.1-stable_linux.x86_64
-
-      # 3️⃣ Baixa export templates
-      - name: Setup Export Templates
-        run: |
-          wget https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz -O templates.tpz
-          godot/Godot_v4.4.1-stable_linux.x86_64 --headless --no-window --import-export-templates templates.tpz
-
-      # 4️⃣ Criar build folder
-      - name: Create build folder
-        run: mkdir -p build/windows
-
-      # 5️⃣ Export Windows
-      - name: Export Windows
-        run: |
-          godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path . --export "Windows Desktop" build/windows/Kareshi-Project.exe
-
-      # 6️⃣ Upload artifact
-      - name: Upload artifact
-        uses: actions/upload-artifact@main
+      # 2️⃣ Usa a Action firebelley/godot-export para baixar Godot + templates
+      - name: Export Windows build
+        uses: firebelley/godot-export@v7.0.0
         with:
-          name: Kareshi-Project-Windows
-          path: build/windows/Kareshi-Project.exe
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.5.1/Godot_v4.5.1-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/4.5.1/Godot_v4.5.1-stable_export_templates.tpz
+          relative_project_path: ./
+          archive_output: true
+          presets_to_export: "Windows Desktop"
