@@ -10,26 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout do repositório
       - uses: actions/checkout@v5
 
-      - name: Setup Godot
+      # 2️⃣ Baixa Godot Linux (SourceForge para evitar timeouts)
+      - name: Download Godot Linux
         run: |
           wget https://sourceforge.net/projects/godot-engine.mirror/files/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -O godot.zip
           unzip godot.zip -d godot
           chmod +x godot/Godot_v4.5.1-stable_linux.x86_64
 
+      # 3️⃣ Importa templates de exportação
       - name: Setup Export Templates
         run: |
           wget https://downloads.tuxfamily.org/godotengine/4.5.1/Godot_v4.5.1-stable_export_templates.tpz -O templates.tpz
           godot/Godot_v4.5.1-stable_linux.x86_64 --headless --no-window --import-export-templates templates.tpz
 
+      # 4️⃣ Cria pasta de build
       - name: Create build folder
         run: mkdir -p build/windows
 
+      # 5️⃣ Exporta para Windows usando preset com icon.png e assets
       - name: Export Windows
         run: |
           godot/Godot_v4.5.1-stable_linux.x86_64 --headless --path . --export "Windows Desktop" build/windows/Kareshi-Project.exe
 
+      # 6️⃣ Faz upload do artefato
       - name: Upload artifact
         uses: actions/upload-artifact@main
         with:
